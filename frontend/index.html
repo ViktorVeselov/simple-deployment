@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Glassy Chatbot Interface</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        #container {
+            display: flex;
+            height: 100%;
+        }
+        #chat-history {
+            width: 10%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: auto;
+            padding: 20px;
+        }
+        #chat-section {
+            width: 80%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        #model-selector {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+        #chat-window {
+            flex-grow: 1;
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+        #user-input, button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            color: white;
+            overflow-y: auto; 
+        }
+        textarea#user-input {
+            width: calc(100% - 70px);
+            height: 100%;
+            resize: none;
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+        #user-input {
+            width: calc(100% - 70px);
+            overflow-y: auto; 
+            word-wrap: break-word;  
+        }
+        button {
+            cursor: pointer;
+            width: 60px;
+        }
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        #add-chat-button {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+            color: white;
+        }
+        .chat-entry {
+            padding: 5px;
+            margin: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-radius: 3px;
+        }
+        .code-snippet {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .copy-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+        #container {
+            display: flex;
+            flex-direction: row;
+            height: calc(100vh - 50px);  
+        }
+        #user-input-section {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            height: 50px;
+        }
+        textarea#user-input {
+            flex-grow: 1;
+            resize: none;
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+        .hidden {
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="chat-history">
+            <button id="add-chat-button" onclick="addChatPrompt()">Add Chat</button>
+            <div id="chat-list"></div>
+        </div>
+        <div id="chat-section">
+            <div id="model-selector">
+                <input type="file" id="model-directory" webkitdirectory directory multiple />
+                <input type="text" id="huggingface-model" placeholder="Hugging Face model" />
+                <button onclick="selectModel()">Select Model</button>
+            </div>
+            <div id="chat-window"></div>
+            <div id="user-input-section">
+                <button onclick="sendMessage()">Send</button>
+                <textarea id="user-input" onkeydown="handleEnterKey(event)"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script>
+        let chatCounter = 0;
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+
+        function addChatPrompt() {
+            const chatName = prompt("Enter the name for the new chat:");
+            if (chatName) {
+                addChat(chatName);
+            }
+        }
+        function toggleDropdown() {
+            const dropdown = document.getElementById("model-dropdown");
+            dropdown.classList.toggle("hidden");
+        }
+        
+        function showLocalModelInput() {
+            document.getElementById("model-directory").classList.remove("hidden");
+            document.getElementById("huggingface-model").classList.add("hidden");
+        }
+        
+        function showHuggingFaceInput() {
+            document.getElementById("huggingface-model").classList.remove("hidden");
+            document.getElementById("model-directory").classList.add("hidden");
+        }
+        
+
+        function addChat(name) {
+            chatCounter++;
+            const chatList = document.getElementById("chat-list");
+            const chatDiv = document.createElement("div");
+            chatDiv.id = `chat-${chatCounter}`;
+            chatDiv.innerHTML = `${name} <button onclick="deleteChat(${chatCounter})">Delete</button>`;
+            chatList.appendChild(chatDiv);
+        }
+
+        function deleteChat(id) {
+            const chatDiv = document.getElementById(`chat-${id}`);
+            chatDiv.remove();
+        }
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            const chatWindow = document.getElementById("chat-window");
+        
+            // Display user message
+            chatWindow.innerHTML += `<div>User: ${userInput}</div>`;
+        
+            // Send message to back-end and get response
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'user_input': userInput })  
+            }).then(res => res.json());
+        
+            // Display bot message
+            chatWindow.innerHTML += `<div>Bot: ${response.model_response}</div>`;  
+            document.getElementById("user-input").value = '';
+        }
+        
+
+        function copyCode(element) {
+            const code = element.parentElement.textContent.replace('Copy', '');
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Code copied to clipboard');
+            });
+        }
+        async function selectModel() {
+            const modelDirectory = document.getElementById("model-directory").files;
+            const huggingFaceModel = document.getElementById("huggingface-model").value;
+            const chatWindow = document.getElementById("chat-window");
+            
+            let modelType = '';
+            let modelPath = '';
+            
+            if (modelDirectory.length > 0) {
+                modelType = 'local';
+                modelPath = 'your-directory-path-here';  // This is just a placeholder
+                chatWindow.innerHTML += `<div>Bot: Local model selected from directory.</div>`;
+                // Call the function to zip and send the model
+                await zipAndSend();
+            } else if (huggingFaceModel) {
+                modelType = 'hugging_face';
+                modelPath = huggingFaceModel;
+                chatWindow.innerHTML += `<div>Bot: Attempting to download Hugging Face model: ${huggingFaceModel}...</div>`;
+            } else {
+                chatWindow.innerHTML += `<div>Bot: No model selected.</div>`;
+                return;
+            }
+            
+            // Sending POST request to backend
+            try {
+                const response = await fetch('/select_model', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 'model_type': modelType, 'model_path': modelPath })
+                });
+            
+                const data = await response.json();
+                chatWindow.innerHTML += `<div>Bot: ${data.message}</div>`;  
+            } catch (error) {
+                chatWindow.innerHTML += `<div>Bot: Error communicating with backend.</div>`;
+            }
+        }
+        
+
+        async function zipAndSend() {
+            const modelDirectory = document.getElementById("model-directory").files;
+            let zip = new JSZip();
+            for (const file of modelDirectory) {
+                zip.file(file.name, file);
+            }
+            const content = await zip.generateAsync({type: "blob"});
+            const formData = new FormData();
+            formData.append('model', content);
+        
+            fetch('/upload_model', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json()).then(data => {
+                console.log(data);
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+                
+    </script>
+</body>
+</html>
