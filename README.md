@@ -63,5 +63,5 @@ This project is a chatbot interface that integrates Hugging Face's Transformers 
 2. The chatbot's response will appear below your message.
 
 ---
-
-Feel free to edit this README.md file to better suit your project.
+# Reference
+Viktor Veselov 10/28/2023
