@@ -39,7 +39,7 @@ This project is a chatbot interface that integrates Hugging Face's Transformers 
 1. Clone the repository.
 
    ```
-   git clone https://github.com/your-repo-link.git
+   git clone https://github.com/SweatyCrayfish/simple-deployment/.git
    ```
 
 2. Navigate to the project directory.
