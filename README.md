@@ -32,6 +32,7 @@ This project is a chatbot interface that integrates Hugging Face's Transformers 
 1. Python 3.8
 2. pip
 3. Flask
+4. At least 6 GB RAM to host cohesive model
 
 ### Installation
 
