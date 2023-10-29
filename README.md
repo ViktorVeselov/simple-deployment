@@ -45,7 +45,7 @@ This project is a chatbot interface that integrates Hugging Face's Transformers 
 2. Navigate to the project directory.
 
    ```
-   cd Chatbot-Interface
+   cd simple-deploymemt
    ```
 
 3. Install the required Python packages.
