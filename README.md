@@ -29,8 +29,9 @@ This project is a chatbot interface that integrates Hugging Face's Transformers 
 
 ### Prerequisites
 
-1. Python 3.x
+1. Python 3.8
 2. pip
+3. Flask
 
 ### Installation
 
