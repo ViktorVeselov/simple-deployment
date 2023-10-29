@@ -1,5 +1,9 @@
 # simple-deployment
 
+## Resources
+[![GitHub Repo stars](https://img.shields.io/github/stars/your-github-username/your-repo-name?style=social)](https://github.com/SweatyCrayfish/simple-deployment/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/SweatyCrayfish/simple-deployment/blob/main/LICENCE.md)
+
 # Chatbot Interface with Flask and Hugging Face Transformers
 
 ## Description
