@@ -4,6 +4,7 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/your-github-username/your-repo-name?style=social)](https://github.com/SweatyCrayfish/simple-deployment/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/SweatyCrayfish/simple-deployment/blob/main/LICENCE.md)
 [![PyPi](https://img.shields.io/badge/PyPi-Page-blue)](https://pypi.org/project/simple-deployment/)
+[![Downloads](https://pepy.tech/badge/simple-deployment)](https://pepy.tech/project/simple-deployment)
 ### 🔗 Links
 - **PyPi Package**: [simple-deployment](https://pypi.org/project/simple-deployment/)
 
